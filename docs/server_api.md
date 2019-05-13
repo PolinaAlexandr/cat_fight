@@ -7,9 +7,7 @@
 
 ```
 
-# Valid statuses with outputs
- - 
-
+# Valid statuses with output
  - `ok` : Your request is seccussfully processed
  - `error`: One of the processes failed
 
