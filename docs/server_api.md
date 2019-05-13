@@ -8,18 +8,27 @@
 ```
 
 # Valid statuses with outputs
+ - 
 
- - `ok` : Your request is seccussfully processed:
+ - `ok` : Your request is seccussfully processed
+ - `error`: One of the processes failed
+
+ Login valid statuses:
  ```
     {
         "status" : "ok",
         "comment": "You are seccussfully logged in"
     }
  ```
-- `error`: One of the processes failed:
-```
+ ```
     {
         "status" : "error",
         "comment": "Please check your login or sign up by following link [sign_up]"
+    }
+```
+```
+    {
+        "status" : "error",
+        "comment" : "Invalid format, check your input and try again"
     }
 ```
