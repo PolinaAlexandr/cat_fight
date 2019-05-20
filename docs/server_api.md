@@ -48,6 +48,13 @@ Registration valid statuses:
 ```
     {
         "status" : "error",
+        "comment" :  "Please follow the current template 
+        {"login": "John", "password" : "*****"}"
+    }
+```
+```
+    {
+        "status" : "error",
         "comment" : "This login already exists, please choose the new one"
     }
 ```
