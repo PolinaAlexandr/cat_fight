@@ -30,6 +30,13 @@
         "comment" : "Invalid format, check your input and try again"
     }
 ```
+```
+    {
+        "status" : "error",
+        "comment" :  "Please follow the current template 
+        {"login": "John", "password" : "*****"}"
+    }
+```
 
 Registration valid statuses:
 ```
