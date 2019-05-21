@@ -15,7 +15,7 @@
  ```
     {
         "status" : "ok",
-        "comment": "You are seccussfully logged in"
+        "comment": "You are successfully logged in"
     }
  ```
  ```
@@ -42,7 +42,7 @@ Registration valid statuses:
 ```
     {
         "status" : "ok",
-        "comment": "You are seccussfully registered"
+        "comment": "You are successfully registered"
     }
 ```
 ```
