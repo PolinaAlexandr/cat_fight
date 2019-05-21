@@ -1,8 +1,6 @@
 import sqlite3
 import os
 
-from app import authentification
-
 
 CREATE_TABLE_QUERY = (
         'CREATE TABLE IF NOT EXISTS  Users'
@@ -35,8 +33,10 @@ def init_db():
 
     cursor.execute(CREATE_TABLE_QUERY)
 
-    connection.commit()
     cursor.close()
+    connection.commit()
+    connection.close()
+    
 
 def user_exists(login):
     connection = sqlite3.connect(DATABASE_PATH)
@@ -44,6 +44,22 @@ def user_exists(login):
 
     cursor.execute('SELECT * FROM Users WHERE login = ?', (login,))
     users = cursor.fetchone()
+    cursor.close()
+    connection.close()
+
     return users is not None
+
+def new_user(login, password):
+    connection = sqlite3.connect(DATABASE_PATH)
+    cursor = connection.cursor()
+
+    cursor.execute('INSERT INTO Users (login, password) VALUES(?,?)', (login, password))
+    
+    cursor.close()
+    connection.commit()
+    connection.close()
+
+
+
     
 
