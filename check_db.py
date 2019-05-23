@@ -1,5 +1,6 @@
 import sqlite3
 import os
+import hashlib
 
 
 CREATE_TABLE_QUERY = (
@@ -51,10 +52,12 @@ def user_exists(login):
 
 
 def password_is_correct(login, password):
+    hash_password = hashlib.sha1(password.encode()).hexdigest()
+
     connection = sqlite3.connect(DATABASE_PATH)
     cursor = connection.cursor()
 
-    cursor.execute('SELECT login FROM Users WHERE login = ? and password = ?', (login, password))
+    cursor.execute('SELECT login FROM Users WHERE login = ? and password = ?', (login, hash_password))
     user = cursor.fetchone()
     cursor.close()
     connection.close()
@@ -63,10 +66,12 @@ def password_is_correct(login, password):
 
 
 def new_user(login, password):
+    hash_password = hashlib.sha1(password.encode()).hexdigest()
+
     connection = sqlite3.connect(DATABASE_PATH)
     cursor = connection.cursor()
 
-    cursor.execute('INSERT INTO Users (login, password) VALUES(?,?)', (login, password))
+    cursor.execute('INSERT INTO Users (login, password) VALUES(?,?)', (login, hash_password))
     
     cursor.close()
     connection.commit()
