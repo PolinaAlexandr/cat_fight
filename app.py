@@ -24,7 +24,10 @@ def login():
             """
         })
 
-    if check_db.user_exists(post_data['login']):
+    user_login = post_data['login']
+    user_password = post_data['password']
+
+    if check_db.user_exists(user_login) and check_db.password_is_correct(user_login, user_password):
         return jsonify({
             "status" : "ok",
             "comment": "You are successfully logged in"
@@ -32,7 +35,7 @@ def login():
 
     return  jsonify ({
         "status" : "error",
-        "comment": "Please check your login or sign up by following link [sign_up]"
+        "comment": "Please check your login/password or sign up by following link [sign_up]"
     })
 
     
@@ -58,8 +61,7 @@ def registration():
         return jsonify({
             "status" : "ok",
             "comment": "You are successfully registered"
-        })
-        
+        })    
     else:
         return jsonify( {
             "status" : "error",

@@ -43,11 +43,24 @@ def user_exists(login):
     cursor = connection.cursor()
 
     cursor.execute('SELECT * FROM Users WHERE login = ?', (login,))
-    users = cursor.fetchone()
+    user = cursor.fetchone()
     cursor.close()
     connection.close()
 
-    return users is not None
+    return user is not None
+
+
+def password_is_correct(login, password):
+    connection = sqlite3.connect(DATABASE_PATH)
+    cursor = connection.cursor()
+
+    cursor.execute('SELECT login FROM Users WHERE login = ? and password = ?', (login, password))
+    user = cursor.fetchone()
+    cursor.close()
+    connection.close()
+
+    return user is not None
+
 
 def new_user(login, password):
     connection = sqlite3.connect(DATABASE_PATH)
