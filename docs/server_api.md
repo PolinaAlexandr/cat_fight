@@ -21,7 +21,7 @@
  ```
     {
         "status" : "error",
-        "comment": "Please check your login or sign up by following link [sign_up]"
+        "comment": "Please check your login/password or sign up by following link [sign_up]"
     }
 ```
 ```
