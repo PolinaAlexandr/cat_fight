@@ -4,3 +4,4 @@ venv/
 .vscode/
 *.db*
 postgres_test.py
+check_db.pyc
