@@ -71,36 +71,40 @@ def registration():
         })
 
     
-# @app.route('/stats', methods=['POST'])
-# def statistics():
-#     post_data = request.get_json()
-#     if not post_data:
-#         return jsonify({
-#             "status" : "error",
-#             "comment" : "Invalid format, check your input and try again"
-#         })
+@app.route('/stats', methods=['POST'])
+def statistics():
+    post_data = request.get_json()
+    if not post_data:
+        return jsonify({
+            "status" : "error",
+            "comment" : "Invalid format, check your input and try again"
+        })
     
-#     if not 'login' in post_data or not 'password':
-#         return jsonify({"""
-#             "status" : "error",
-#             "comment" : "Please follow the current template {"login" : "John",
-#             "password" : "*****"}"
-#             """
-#         })
+    if not 'login' in post_data or not 'token':
+        return jsonify({"""
+            "status" : "error",
+            "comment" : "Please follow the current template {"login" : "John",
+            "token" : "*****"}"
+            """
+        })
 
-#     if not check_db.user_exists(post_data['login']):
-#         check_db.new_user(post_data['login'], post_data['password'])
-#         return jsonify({
-#             "status" : "ok",
-#             "comment": "You are successfully registered"
-#         })    
-#     else:
-#         return jsonify( {
-#             "status" : "error",
-#             "comment" : "This login already exists, please choose the new one"
-#         })
+    if not check_db.token_is_valid(post_data['token']):
+        return jsonify({
+            "status" : "error",
+            "comment" : "Invalid token"
+        })
 
+    if not check_db.user_exists(post_data['login']):
+        return jsonify({
+            "status" : "error",
+            "comment" : "Cannot check statistics, user does not exists"
+        })
+    
 
+    return jsonify({
+        "status" : "ok",
+        "statistics" : check_db.get_user_stats(post_data['login']).to_dict()
+    })
 
 if __name__ == "__main__":
     check_db.init_db()

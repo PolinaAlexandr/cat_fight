@@ -3,10 +3,13 @@ import os
 import hashlib
 import uuid
 
+from datetime import datetime
+from user_statistics import UserStatistics
+
 
 CREATE_TABLE_QUERY = (
         'CREATE TABLE IF NOT EXISTS  Users'
-        '(login text, password text, token text)'
+        '(login text, password text, token text, registration_date date)'
         )
 
 DATABASE_NAME = "users.db"
@@ -86,18 +89,40 @@ def password_is_correct(login, password):
 
 def new_user(login, password):
     hash_password = make_hash(password)
+    registration_date = datetime.now()
     
 
     connection = sqlite3.connect(DATABASE_PATH)
     cursor = connection.cursor()
 
-    cursor.execute('INSERT INTO Users (login, password) VALUES(?,?)', (login, hash_password))
+    cursor.execute('INSERT INTO Users (login, password, registration_date) VALUES(?,?,?)', (login, hash_password, registration_date))
     
     cursor.close()
     connection.commit()
     connection.close()
 
 
+def token_is_valid(token):
+    connection = sqlite3.connect(DATABASE_PATH)
+    cursor = connection.cursor()
 
+    cursor.execute('SELECT token FROM Users WHERE token = ?', (token, ))
+    user_token = cursor.fetchone()
+    
+    cursor.close()
+    connection.close()
+    
+    return user_token is not None
+
+def get_user_stats(user_name):
+    connection = sqlite3.connect(DATABASE_PATH)
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT registration_date FROM Users WHERE login = ?", (user_name, ))   
+    row = cursor.fetchone()
+    user_statistics = UserStatistics(user_name, row[0])
+    cursor.close()
+    connection.close()
+    return user_statistics
     
 
