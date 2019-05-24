@@ -1,11 +1,12 @@
 import sqlite3
 import os
 import hashlib
+import uuid
 
 
 CREATE_TABLE_QUERY = (
         'CREATE TABLE IF NOT EXISTS  Users'
-        '(login text, password text)'
+        '(login text, password text, token text)'
         )
 
 DATABASE_NAME = "users.db"
@@ -43,7 +44,7 @@ def user_exists(login):
     connection = sqlite3.connect(DATABASE_PATH)
     cursor = connection.cursor()
 
-    cursor.execute('SELECT * FROM Users WHERE login = ?', (login,))
+    cursor.execute('SELECT * FROM Users WHERE login = ?', (login, ))
     user = cursor.fetchone()
     cursor.close()
     connection.close()
@@ -51,12 +52,30 @@ def user_exists(login):
     return user is not None
 
 
-def password_is_correct(login, password):
-    hash_password = hashlib.sha1(password.encode()).hexdigest()
+def generate_token(login, password):
+    hash_password = make_hash(password)
 
     connection = sqlite3.connect(DATABASE_PATH)
     cursor = connection.cursor()
+    token = uuid.uuid4().hex
 
+    cursor.execute('UPDATE Users SET token = ? WHERE login = ? and password = ?', (token, login, hash_password,))
+    
+    cursor.close()
+    connection.commit()
+    connection.close()
+
+    return token
+
+
+def make_hash(string):
+    return hashlib.sha1(string.encode()).hexdigest()
+
+
+def password_is_correct(login, password):
+    hash_password = make_hash(password)
+    connection = sqlite3.connect(DATABASE_PATH)
+    cursor = connection.cursor()
     cursor.execute('SELECT login FROM Users WHERE login = ? and password = ?', (login, hash_password))
     user = cursor.fetchone()
     cursor.close()
@@ -66,7 +85,8 @@ def password_is_correct(login, password):
 
 
 def new_user(login, password):
-    hash_password = hashlib.sha1(password.encode()).hexdigest()
+    hash_password = make_hash(password)
+    
 
     connection = sqlite3.connect(DATABASE_PATH)
     cursor = connection.cursor()

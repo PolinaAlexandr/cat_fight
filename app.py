@@ -28,9 +28,11 @@ def login():
     user_password = post_data['password']
 
     if check_db.user_exists(user_login) and check_db.password_is_correct(user_login, user_password):
+        token = check_db.generate_token(user_login, user_password)
         return jsonify({
             "status" : "ok",
-            "comment": "You are successfully logged in"
+            "comment": "You are successfully logged in",
+            "token" : token
         })  
 
     return  jsonify ({
@@ -67,6 +69,37 @@ def registration():
             "status" : "error",
             "comment" : "This login already exists, please choose the new one"
         })
+
+    
+# @app.route('/stats', methods=['POST'])
+# def statistics():
+#     post_data = request.get_json()
+#     if not post_data:
+#         return jsonify({
+#             "status" : "error",
+#             "comment" : "Invalid format, check your input and try again"
+#         })
+    
+#     if not 'login' in post_data or not 'password':
+#         return jsonify({"""
+#             "status" : "error",
+#             "comment" : "Please follow the current template {"login" : "John",
+#             "password" : "*****"}"
+#             """
+#         })
+
+#     if not check_db.user_exists(post_data['login']):
+#         check_db.new_user(post_data['login'], post_data['password'])
+#         return jsonify({
+#             "status" : "ok",
+#             "comment": "You are successfully registered"
+#         })    
+#     else:
+#         return jsonify( {
+#             "status" : "error",
+#             "comment" : "This login already exists, please choose the new one"
+#         })
+
 
 
 if __name__ == "__main__":
