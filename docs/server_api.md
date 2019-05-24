@@ -16,6 +16,7 @@
     {
         "status" : "ok",
         "comment": "You are successfully logged in"
+        "token" : "your_token"
     }
  ```
  ```
