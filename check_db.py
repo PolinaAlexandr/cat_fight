@@ -48,7 +48,8 @@ def get_user_id(login):
     cursor = connection.cursor()
 
     cursor.execute('SELECT id FROM Users WHERE login = ?', (login, ))
-    user_id = cursor.fetchone()
+    row = cursor.fetchone()
+    user_id = row[0]
     cursor.close()
     connection.close()
 
@@ -60,6 +61,7 @@ def generate_token(user_id):
     connection = sqlite3.connect(DATABASE_PATH)
     cursor = connection.cursor()
     token = uuid.uuid4().hex
+    print("\n!!!!!!!!!!!!\n", user_id, type(user_id), token, type(token), "\n!!!!!!!!!!!!!!!!!!!!!!")
 
     cursor.execute('UPDATE Users SET token = ? WHERE id = ?', (token, user_id))
     
@@ -113,13 +115,13 @@ def token_is_valid(token):
     
     return user_token is not None
 
-def get_user_stats(user_name):
+def get_user_stats(user_id):
     connection = sqlite3.connect(DATABASE_PATH)
     cursor = connection.cursor()
 
-    cursor.execute("SELECT registration_date FROM Users WHERE login = ?", (user_name, ))   
+    cursor.execute("SELECT login, registration_date FROM Users WHERE id = ?", (user_id, ))   
     row = cursor.fetchone()
-    user_statistics = UserStatistics(user_name, row[0])
+    user_statistics = UserStatistics(row[0], row[1])
     cursor.close()
     connection.close()
     return user_statistics
