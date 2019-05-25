@@ -9,7 +9,7 @@ from user_statistics import UserStatistics
 
 CREATE_TABLE_QUERY = (
         'CREATE TABLE IF NOT EXISTS  Users'
-        '(login text, password text, token text, registration_date date)'
+        '(id integer primary key autoincrement, login text, password text, token text, registration_date date)'
         )
 
 DATABASE_NAME = "users.db"
@@ -43,26 +43,25 @@ def init_db():
     connection.close()
     
 
-def user_exists(login):
+def get_user_id(login):
     connection = sqlite3.connect(DATABASE_PATH)
     cursor = connection.cursor()
 
-    cursor.execute('SELECT * FROM Users WHERE login = ?', (login, ))
-    user = cursor.fetchone()
+    cursor.execute('SELECT id FROM Users WHERE login = ?', (login, ))
+    user_id = cursor.fetchone()
     cursor.close()
     connection.close()
 
-    return user is not None
+    return user_id or None
 
 
-def generate_token(login, password):
-    hash_password = make_hash(password)
+def generate_token(user_id):
 
     connection = sqlite3.connect(DATABASE_PATH)
     cursor = connection.cursor()
     token = uuid.uuid4().hex
 
-    cursor.execute('UPDATE Users SET token = ? WHERE login = ? and password = ?', (token, login, hash_password,))
+    cursor.execute('UPDATE Users SET token = ? WHERE id = ?', (token, user_id))
     
     cursor.close()
     connection.commit()

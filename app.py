@@ -26,9 +26,10 @@ def login():
 
     user_login = post_data['login']
     user_password = post_data['password']
+    user_id = check_db.get_user_id()
 
-    if check_db.user_exists(user_login) and check_db.password_is_correct(user_login, user_password):
-        token = check_db.generate_token(user_login, user_password)
+    if user_id and check_db.password_is_correct(user_login, user_password):
+        token = check_db.generate_token(id)
         return jsonify({
             "status" : "ok",
             "comment": "You are successfully logged in",
@@ -58,7 +59,7 @@ def registration():
             """
         })
 
-    if not check_db.user_exists(post_data['login']):
+    if not check_db.get_user_id(post_data['login']):
         check_db.new_user(post_data['login'], post_data['password'])
         return jsonify({
             "status" : "ok",
@@ -94,7 +95,7 @@ def statistics():
             "comment" : "Invalid token"
         })
 
-    if not check_db.user_exists(post_data['login']):
+    if not check_db.get_user_id(post_data['login']):
         return jsonify({
             "status" : "error",
             "comment" : "Cannot check statistics, user does not exists"
