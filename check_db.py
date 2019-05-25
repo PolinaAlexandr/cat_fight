@@ -9,7 +9,7 @@ from user_statistics import UserStatistics
 
 CREATE_TABLE_QUERY = (
         'CREATE TABLE IF NOT EXISTS  Users'
-        '(id integer primary key autoincrement, login text, password text, token text, registration_date date)'
+        '(id integer primary key autoincrement, user_name text, password text, token text, registration_date date)'
         )
 
 DATABASE_NAME = "users.db"
@@ -43,25 +43,26 @@ def init_db():
     connection.close()
     
 
-def get_user_id(login):
+def get_user_id(user_name):
     connection = sqlite3.connect(DATABASE_PATH)
     cursor = connection.cursor()
 
-    cursor.execute('SELECT id FROM Users WHERE login = ?', (login, ))
+    cursor.execute('SELECT id FROM Users WHERE user_name = ?', (user_name, ))
     row = cursor.fetchone()
-    user_id = row[0]
+    if row:
+        user_id = row[0]
+    else:
+        user_id = None
     cursor.close()
     connection.close()
 
-    return user_id or None
-
+    return user_id
 
 def generate_token(user_id):
 
     connection = sqlite3.connect(DATABASE_PATH)
     cursor = connection.cursor()
     token = uuid.uuid4().hex
-    print("\n!!!!!!!!!!!!\n", user_id, type(user_id), token, type(token), "\n!!!!!!!!!!!!!!!!!!!!!!")
 
     cursor.execute('UPDATE Users SET token = ? WHERE id = ?', (token, user_id))
     
@@ -76,11 +77,11 @@ def make_hash(string):
     return hashlib.sha1(string.encode()).hexdigest()
 
 
-def password_is_correct(login, password):
+def password_is_correct(user_name, password):
     hash_password = make_hash(password)
     connection = sqlite3.connect(DATABASE_PATH)
     cursor = connection.cursor()
-    cursor.execute('SELECT login FROM Users WHERE login = ? and password = ?', (login, hash_password))
+    cursor.execute('SELECT user_name FROM Users WHERE user_name = ? and password = ?', (user_name, hash_password))
     user = cursor.fetchone()
     cursor.close()
     connection.close()
@@ -88,7 +89,7 @@ def password_is_correct(login, password):
     return user is not None
 
 
-def new_user(login, password):
+def new_user(user_name, password):
     hash_password = make_hash(password)
     registration_date = datetime.now()
     
@@ -96,7 +97,7 @@ def new_user(login, password):
     connection = sqlite3.connect(DATABASE_PATH)
     cursor = connection.cursor()
 
-    cursor.execute('INSERT INTO Users (login, password, registration_date) VALUES(?,?,?)', (login, hash_password, registration_date))
+    cursor.execute('INSERT INTO Users (user_name, password, registration_date) VALUES(?,?,?)', (user_name, hash_password, registration_date))
     
     cursor.close()
     connection.commit()
@@ -119,7 +120,7 @@ def get_user_stats(user_id):
     connection = sqlite3.connect(DATABASE_PATH)
     cursor = connection.cursor()
 
-    cursor.execute("SELECT login, registration_date FROM Users WHERE id = ?", (user_id, ))   
+    cursor.execute("SELECT user_name, registration_date FROM Users WHERE id = ?", (user_id, ))   
     row = cursor.fetchone()
     user_statistics = UserStatistics(row[0], row[1])
     cursor.close()
