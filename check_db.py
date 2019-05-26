@@ -63,8 +63,9 @@ def generate_token(user_id):
     connection = sqlite3.connect(DATABASE_PATH,  detect_types=sqlite3.PARSE_DECLTYPES)
     cursor = connection.cursor()
     token = uuid.uuid4().hex
+    status = "logged in"
 
-    cursor.execute('UPDATE Users SET token = ? WHERE id = ?', (token, user_id))
+    cursor.execute('UPDATE Users SET token = ?, status = ? WHERE id = ?', (token, status, user_id))
     
     cursor.close()
     connection.commit()
