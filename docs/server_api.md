@@ -1,67 +1,106 @@
 # Output format
 ``` 
     { 
-        "status" : "following status",
+        "result" : "operation result",
         "comment" : "supplementing comment"
     }
 
 ```
 
-# Valid statuses with output
+# Valid responses with output
  - `ok` : Your request is seccussfully processed
  - `error`: One of the processes failed
 
- Login valid statuses:
+ Login valid responses:
  ```
     {
-        "status" : "ok",
+        "result" : "ok",
         "comment": "You are successfully logged in"
         "token" : "your_token"
     }
  ```
  ```
     {
-        "status" : "error",
+        "result" : "error",
         "comment": "Please check your login/password or sign up by following link [sign_up]"
     }
 ```
 ```
     {
-        "status" : "error",
+        "result" : "error",
         "comment" : "Invalid format, check your input and try again"
     }
 ```
 ```
     {
-        "status" : "error",
+        "result" : "error",
         "comment" :  "Please follow the current template 
         {"login": "John", "password" : "*****"}"
     }
 ```
 
-Registration valid statuses:
+Registration valid responses:
 ```
     {
-        "status" : "ok",
+        "result" : "ok",
         "comment": "You are successfully registered"
     }
 ```
 ```
     {
-        "status" : "error",
+        "result" : "error",
         "comment" :  "Please follow the current template 
         {"login": "John", "password" : "*****"}"
     }
 ```
 ```
     {
-        "status" : "error",
+        "result" : "error",
         "comment" : "This login already exists, please choose the new one"
     }
 ```
 ```
     {
-        "status" : "error",
+        "result" : "error",
         "comment" : "Invalid format, check your input and try again"
+    }
+```
+
+Statistics valid responses:
+```
+    {
+        "result" : "ok"
+        "statistics": {
+            "registration_date": "26/26/2019 18/26/28", 
+            "status": "logged out", 
+            "user_name": "Jack"
+        }, 
+
+    }
+```
+```
+    {
+        "result" : "error",
+        "comment" : "Invalid format, check your input and try again"
+    }
+```
+```
+    {"""
+        "result" : "error",
+        "comment" : "Please follow the current template {"user_name" : "John",
+        "token" : "*****"}"
+        """
+    }
+```
+```
+    {
+        "result" : "error",
+        "comment" : "Invalid token"
+    }
+```
+```
+    {
+        "result" : "error",
+        "comment" : "Cannot check statistics, user does not exists"
     }
 ```
