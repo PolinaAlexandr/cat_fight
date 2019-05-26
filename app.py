@@ -13,12 +13,12 @@ def login():
     post_data = request.get_json()
     if not post_data:
         return jsonify({
-            "status" : "error",
+            "result" : "error",
             "comment" : "Invalid format, check your input and try again"
         })
     if not 'user_name' in post_data or not 'password':
         return jsonify({"""
-            "status" : "error",
+            "result" : "error",
             "comment" : "Please follow the current template {"user_name" : "John",
             "password" : "*****"}"
             """
@@ -31,13 +31,13 @@ def login():
     if user_id and check_db.password_is_correct(user_name, user_password):
         token = check_db.generate_token(user_id)
         return jsonify({
-            "status" : "ok",
+            "result" : "ok",
             "comment": "You are successfully logged in",
             "token" : token
         })  
 
     return  jsonify ({
-        "status" : "error",
+        "result" : "error",
         "comment": "Please check your user_name/password or sign up by following link [sign_up]"
     })
 
@@ -47,13 +47,13 @@ def registration():
     post_data = request.get_json()
     if not post_data:
         return jsonify({
-            "status" : "error",
+            "result" : "error",
             "comment" : "Invalid format, check your input and try again"
         })
     
     if not 'user_name' in post_data or not 'password':
         return jsonify({"""
-            "status" : "error",
+            "result" : "error",
             "comment" : "Please follow the current template {"user_name" : "John",
             "password" : "*****"}"
             """
@@ -62,12 +62,12 @@ def registration():
     if not check_db.get_user_id(post_data['user_name']):
         check_db.new_user(post_data['user_name'], post_data['password'])
         return jsonify({
-            "status" : "ok",
+            "result" : "ok",
             "comment": "You are successfully registered"
         })    
     else:
         return jsonify( {
-            "status" : "error",
+            "result" : "error",
             "comment" : "This user_name already exists, please choose the new one"
         })
 
@@ -77,13 +77,13 @@ def statistics():
     post_data = request.get_json()
     if not post_data:
         return jsonify({
-            "status" : "error",
+            "result" : "error",
             "comment" : "Invalid format, check your input and try again"
         })
     
     if not 'user_name' in post_data or not 'token':
         return jsonify({"""
-            "status" : "error",
+            "result" : "error",
             "comment" : "Please follow the current template {"user_name" : "John",
             "token" : "*****"}"
             """
@@ -91,20 +91,20 @@ def statistics():
 
     if not check_db.token_is_valid(post_data['token']):
         return jsonify({
-            "status" : "error",
+            "result" : "error",
             "comment" : "Invalid token"
         })
     
     user_id = check_db.get_user_id(post_data['user_name'])
     if not user_id:
         return jsonify({
-            "status" : "error",
+            "result" : "error",
             "comment" : "Cannot check statistics, user does not exists"
         })
     
 
     return jsonify({
-        "status" : "ok",
+        "result" : "ok",
         "statistics" : check_db.get_user_stats(user_id).to_dict()
     })
 
