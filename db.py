@@ -122,14 +122,13 @@ def token_is_valid(token):
 def get_user_stats(user_id):
     connection = sqlite3.connect(DATABASE_PATH, detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)
     cursor = connection.cursor()
-    print("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", user_id, type(user_id), "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n")
 
     cursor.execute("SELECT user_name, registration_date, status FROM Users WHERE id = ?", (user_id, ))   
     row = cursor.fetchone()
-    print("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", row[1], type(row[1]), "\n!!!!!!!!!!!!!!!!!!!!!!!!!!\n")
     user_statistics = UserStatistics(row[0], row[1], row[2])
     cursor.close()
     connection.close()
+    
     return user_statistics
     
 
