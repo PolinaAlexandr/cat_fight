@@ -140,7 +140,7 @@ def battle_mode():
     
     return jsonify({
         "result" : "ok",
-        "comment" : user_ememy
+        "comment" : f"Your enemy is:{user_ememy}" 
     })
 
 
