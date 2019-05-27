@@ -2,6 +2,7 @@ import sqlite3
 import os
 import hashlib
 import uuid
+import random
 
 from datetime import datetime
 from user_statistics import UserStatistics
@@ -123,12 +124,24 @@ def get_user_stats(user_id):
     connection = sqlite3.connect(DATABASE_PATH, detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)
     cursor = connection.cursor()
 
-    cursor.execute("SELECT user_name, registration_date, status FROM Users WHERE id = ?", (user_id, ))   
+    cursor.execute('SELECT user_name, registration_date, status FROM Users WHERE id = ?', (user_id, ))   
     row = cursor.fetchone()
     user_statistics = UserStatistics(row[0], row[1], row[2])
     cursor.close()
     connection.close()
     
     return user_statistics
-    
 
+def get_user_enemy(token):
+    connection = sqlite3.connect(DATABASE_PATH, detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)
+    cursor = connection.cursor()
+
+    cursor.execute('SELECT user_name FROM Users WHERE token <> ? and status = "logged in"', (token, ))
+
+    rows = cursor.fetchall()
+    if rows:
+        enemy = random.choice(rows)
+    else:
+        enemy = None
+    
+    return enemy

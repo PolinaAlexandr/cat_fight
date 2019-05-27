@@ -108,6 +108,42 @@ def statistics():
         "statistics" : db.get_user_stats(user_id).to_dict()
     })
 
+
+@app.route('/battle', methods=['POST'])
+def battle_mode():
+    post_data = request.get_json()
+    if not post_data:
+        return jsonify({
+            "result" : "error",
+            "comment" : "Invalid format, check your input and try again"
+        })      
+    
+    if not 'token':
+        return jsonify({"""
+            "result" : "error",
+            "comment" : "Please follow the current template {"token" : "*****"}"
+            """
+        })
+    
+    if not db.token_is_valid(post_data['token']):
+        return jsonify({
+            "result" : "error",
+            "comment" : "Invalid token"
+        })
+
+    user_ememy = db.get_user_enemy(post_data['token'])
+    if not user_ememy:
+        return jsonify({
+            "result" : "error",
+            "comment" : "Cannot find battle partner"
+        })
+    
+    return jsonify({
+        "result" : "ok",
+        "comment" : user_ememy
+    })
+
+
 if __name__ == "__main__":
     db.init_db()
     app.run()

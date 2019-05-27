@@ -10,6 +10,6 @@ class UserStatistics:
     def to_dict(self):
         return {
             "user_name" : self.user_name,
-            "registration_date" : datetime.strftime(self.registration_date, '%d/%M/%Y %H/%M/%S'),
+            "registration_date" : datetime.strftime(self.registration_date, '%d/%m/%Y %H/%M/%S'),
             "status" : self.status
             }
