@@ -1,5 +1,5 @@
 import json 
-import check_db
+import db
 
 from flask import Flask, request, jsonify
 
@@ -26,10 +26,10 @@ def login():
 
     user_name = post_data['user_name']
     user_password = post_data['password']
-    user_id = check_db.get_user_id(user_name)
+    user_id = db.get_user_id(user_name)
 
-    if user_id and check_db.password_is_correct(user_name, user_password):
-        token = check_db.generate_token(user_id)
+    if user_id and db.password_is_correct(user_name, user_password):
+        token = db.generate_token(user_id)
         return jsonify({
             "result" : "ok",
             "comment": "You are successfully logged in",
@@ -59,8 +59,8 @@ def registration():
             """
         })
 
-    if not check_db.get_user_id(post_data['user_name']):
-        check_db.new_user(post_data['user_name'], post_data['password'])
+    if not db.get_user_id(post_data['user_name']):
+        db.new_user(post_data['user_name'], post_data['password'])
         return jsonify({
             "result" : "ok",
             "comment": "You are successfully registered"
@@ -89,13 +89,13 @@ def statistics():
             """
         })
 
-    if not check_db.token_is_valid(post_data['token']):
+    if not db.token_is_valid(post_data['token']):
         return jsonify({
             "result" : "error",
             "comment" : "Invalid token"
         })
     
-    user_id = check_db.get_user_id(post_data['user_name'])
+    user_id = db.get_user_id(post_data['user_name'])
     if not user_id:
         return jsonify({
             "result" : "error",
@@ -105,9 +105,9 @@ def statistics():
 
     return jsonify({
         "result" : "ok",
-        "statistics" : check_db.get_user_stats(user_id).to_dict()
+        "statistics" : db.get_user_stats(user_id).to_dict()
     })
 
 if __name__ == "__main__":
-    check_db.init_db()
+    db.init_db()
     app.run()
