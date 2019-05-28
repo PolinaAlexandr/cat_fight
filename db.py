@@ -10,7 +10,7 @@ from user_statistics import UserStatistics
 
 CREATE_TABLE_QUERY = (
         'CREATE TABLE IF NOT EXISTS  Users'
-        '(id integer primary key autoincrement, user_name text, password text, token text, registration_date timestamp, status text)'
+        '(id integer primary key autoincrement, user_name text, password text, token text, registration_date timestamp, status text, enemy_id int)'
         )
 
 DATABASE_NAME = "users.db"
@@ -148,16 +148,23 @@ def get_user_stats(user_id):
     
     return user_statistics
 
-def get_user_enemy(token):
+def get_user_enemy(user_id):
     connection = sqlite3.connect(DATABASE_PATH, detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)
     cursor = connection.cursor()
 
-    cursor.execute('SELECT user_name FROM Users WHERE token <> ? and status = "logged in"', (token, ))
-
+    cursor.execute('SELECT id, user_name FROM Users WHERE id <> ? and status = "logged in"', (user_id, ))
     rows = cursor.fetchall()
-    if rows:
-        enemy = random.choice(rows)
-    else:
-        enemy = None
+    if not rows:
+        return None
+    enemy_row = random.choice(rows)
+    enemy_id = enemy_row[0]
+    enemy_name = enemy_row[1]
+
+    cursor.execute('UPDATE Users SET enemy_id = ?, status = "fighting" WHERE id = ?', (enemy_id, user_id))
+    cursor.execute('UPDATE Users SET enemy_id = ?, status = "fighting" WHERE id = ?', (user_id, enemy_id))
     
-    return enemy
+    cursor.close()
+    connection.commit()
+    connection.close()
+    
+    return enemy_name

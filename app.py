@@ -139,8 +139,8 @@ def statistics():
     })
 
 
-@app.route('/battle', methods=['POST'])
-def battle_mode():
+@app.route('/battle/join', methods=['POST'])
+def join_battle():
     post_data = request.get_json()
     if not post_data:
         return jsonify({
@@ -148,21 +148,22 @@ def battle_mode():
             "comment" : "Invalid format, check your input and try again"
         })      
     
-    if not 'token':
+    if not 'token' in post_data:
         return jsonify({"""
             "result" : "error",
             "comment" : "Please follow the current template {"token" : "*****"}"
             """
         })
-    
-    if not db.get_user_id_by_token(post_data['token']):
+
+    user_id = db.get_user_id_by_token(post_data['token'])
+    if not user_id:
         return jsonify({
             "result" : "error",
             "comment" : "Invalid token"
         })
 
-    user_ememy = db.get_user_enemy(post_data['token'])
-    if not user_ememy:
+    user_enemy_name = db.get_user_enemy(user_id)
+    if not user_enemy_name:
         return jsonify({
             "result" : "error",
             "comment" : "Cannot find battle partner"
@@ -170,7 +171,7 @@ def battle_mode():
     
     return jsonify({
         "result" : "ok",
-        "comment" : f"Your enemy is:{user_ememy}" 
+        "comment" : f"Your enemy is: {user_enemy_name}" 
     })
 
 
