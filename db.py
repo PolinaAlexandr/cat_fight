@@ -148,7 +148,7 @@ def get_user_stats(user_id):
     
     return user_statistics
 
-def get_user_enemy(user_id):
+def find_enemy(user_id):
     connection = sqlite3.connect(DATABASE_PATH, detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)
     cursor = connection.cursor()
 
@@ -168,3 +168,21 @@ def get_user_enemy(user_id):
     connection.close()
     
     return enemy_name
+
+
+def get_user_enemy(user_id):
+    connection = sqlite3.connect(DATABASE_PATH, detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)
+    cursor = connection.cursor()
+
+    cursor.execute('SELECT enemy_id FROM Users WHERE id = ?', (user_id,))
+    enemy_id = cursor.fetchone()[0]
+    if not enemy_id:
+        return None
+    
+    cursor.execute('SELECT user_name FROM Users WHERE id = ?', (enemy_id, ))
+    enemy_name = cursor.fetchone()[0]
+    
+    cursor.close()
+    connection.close()
+
+    return enemy_name 

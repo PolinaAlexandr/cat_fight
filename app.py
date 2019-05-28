@@ -89,7 +89,7 @@ def registration():
             """
         })
 
-    if not db.get_user_id(post_data['user_name']):
+    if not db.get_user_id_by_name(post_data['user_name']):
         db.new_user(post_data['user_name'], post_data['password'])
         return jsonify({
             "result" : "ok",
@@ -125,7 +125,7 @@ def statistics():
             "comment" : "Invalid token"
         })
     
-    user_id = db.get_user_id(post_data['user_name'])
+    user_id = db.get_user_id_by_name(post_data['user_name'])
     if not user_id:
         return jsonify({
             "result" : "error",
@@ -162,7 +162,7 @@ def join_battle():
             "comment" : "Invalid token"
         })
 
-    user_enemy_name = db.get_user_enemy(user_id)
+    user_enemy_name = db.find_enemy(user_id)
     if not user_enemy_name:
         return jsonify({
             "result" : "error",
@@ -174,6 +174,44 @@ def join_battle():
         "comment" : f"Your enemy is: {user_enemy_name}" 
     })
 
+
+@app.route('/battle/status', methods=['POST'])
+def battle_status():
+    post_data = request.get_json()
+    if not post_data:
+        return jsonify({
+            "result" : "error",
+            "comment" : "Invalid format, check your input and try again"
+        })      
+    
+    if not 'token' in post_data:
+        return jsonify({"""
+            "result" : "error",
+            "comment" : "Please follow the current template {"token" : "*****"}"
+            """
+        })
+
+    user_id = db.get_user_id_by_token(post_data['token'])
+    if not user_id:
+        return jsonify({
+            "result" : "error",
+            "comment" : "Invalid token"
+        })
+
+    user_enemy_name = db.get_user_enemy(user_id)
+    if not user_enemy_name:
+        return jsonify({
+            "result" : "ok",
+            "status" : "You are not in the battle"
+        })
+
+    return jsonify({
+        "result" : "ok",
+        "status" : f"You are fighting against {user_enemy_name}" 
+    })
+    
+        
+    
 
 if __name__ == "__main__":
     db.init_db()
