@@ -11,6 +11,32 @@
  - `ok` : Your request is seccussfully processed
  - `error`: One of the processes failed
 
+Registration valid responses:
+```
+    {
+        "result" : "ok",
+        "comment": "You are successfully registered"
+    }
+```
+```
+    {
+        "result" : "error",
+        "comment" :  "Please follow the current template 
+        {"login": "John", "password" : "*****"}"
+    }
+```
+```
+    {
+        "result" : "error",
+        "comment" : "This login already exists, please choose the new one"
+    }
+```
+```
+    {
+        "result" : "error",
+        "comment" : "Invalid format, check your input and try again"
+    }
+```
  Login valid responses:
  ```
     {
@@ -39,30 +65,30 @@
     }
 ```
 
-Registration valid responses:
+Logout valid responses:
 ```
     {
         "result" : "ok",
-        "comment": "You are successfully registered"
-    }
-```
-```
-    {
-        "result" : "error",
-        "comment" :  "Please follow the current template 
-        {"login": "John", "password" : "*****"}"
-    }
-```
-```
-    {
-        "result" : "error",
-        "comment" : "This login already exists, please choose the new one"
+        "comment": "You are successfully logged out"
     }
 ```
 ```
     {
         "result" : "error",
         "comment" : "Invalid format, check your input and try again"
+    }
+```
+```
+    {"""
+        "result" : "error",
+        "comment" : "Please follow the current template {"token" : "*************"}"
+        """
+    }
+```
+```
+    {
+        "result" : "error",
+        "comment" : "Invalid token, try again"
     }
 ```
 
@@ -102,5 +128,71 @@ Statistics valid responses:
     {
         "result" : "error",
         "comment" : "Cannot check statistics, user does not exists"
+    }
+```
+ 
+Battle/join valid responses:
+```
+    {
+        "result" : "ok",
+        "comment" : "Your enemy is: user's enemy name" 
+    }
+```
+```
+    {
+        "result" : "error",
+        "comment" : "Invalid format, check your input and try again"
+    }
+```
+```
+    {"""
+        "result" : "error",
+        "comment" : "Please follow the current template {"token" : "*****"}"
+        """
+    }
+```
+```
+    {
+        "result" : "error",
+        "comment" : "Invalid token"
+    }
+```
+```
+    {
+        "result" : "error",
+        "comment" : "Cannot find battle partner"
+    }
+```
+
+Battle/status valid responses:
+```
+    {
+        "result" : "ok",
+        "status" : "You are not in the battle"
+    }
+```
+```
+    {
+        "result" : "ok",
+        "status" : "You are fighting against user_enemy_name" 
+    }
+```
+```
+    {
+        "result" : "error",
+        "comment" : "Invalid format, check your input and try again"
+    }
+```
+```
+    {"""
+        "result" : "error",
+        "comment" : "Please follow the current template {"token" : "*****"}"
+        """
+    }
+```
+```
+    {
+        "result" : "error",
+        "comment" : "Invalid token"
     }
 ```

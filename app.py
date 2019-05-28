@@ -211,8 +211,7 @@ def battle_status():
     })
     
         
-    
-
+        
 if __name__ == "__main__":
     db.init_db()
     app.run()
