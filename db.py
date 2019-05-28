@@ -44,7 +44,7 @@ def init_db():
     connection.close()
     
 
-def get_user_id(user_name):
+def get_user_id_by_name(user_name):
     connection = sqlite3.connect(DATABASE_PATH,  detect_types=sqlite3.PARSE_DECLTYPES)
     cursor = connection.cursor()
 
@@ -73,6 +73,34 @@ def generate_token(user_id):
     connection.close()
 
     return token
+
+
+def get_user_id_by_token(token):
+    connection = sqlite3.connect(DATABASE_PATH,  detect_types=sqlite3.PARSE_DECLTYPES)
+    cursor = connection.cursor()
+
+    cursor.execute('SELECT id FROM Users WHERE token = ?', (token, ))
+    row = cursor.fetchone()
+    if row:
+        user_id = row[0]
+    else:
+        user_id = None
+    cursor.close()
+    connection.close()
+
+    return user_id
+
+
+def delete_token(user_id):
+    connection = sqlite3.connect(DATABASE_PATH,  detect_types=sqlite3.PARSE_DECLTYPES)
+    cursor = connection.cursor()
+    status = 'logged out'
+
+    cursor.execute('UPDATE Users SET status = ?, token = NULL WHERE id = ?', (status, user_id))
+    
+    cursor.close()
+    connection.commit()
+    connection.close()
 
 
 def make_hash(string):
@@ -107,18 +135,6 @@ def new_user(user_name, password):
     connection.commit()
     connection.close()
 
-
-def token_is_valid(token):
-    connection = sqlite3.connect(DATABASE_PATH,  detect_types=sqlite3.PARSE_DECLTYPES)
-    cursor = connection.cursor()
-
-    cursor.execute('SELECT token FROM Users WHERE token = ?', (token, ))
-    user_token = cursor.fetchone()
-    
-    cursor.close()
-    connection.close()
-    
-    return user_token is not None
 
 def get_user_stats(user_id):
     connection = sqlite3.connect(DATABASE_PATH, detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)

@@ -26,7 +26,7 @@ def login():
 
     user_name = post_data['user_name']
     user_password = post_data['password']
-    user_id = db.get_user_id(user_name)
+    user_id = db.get_user_id_by_name(user_name)
 
     if user_id and db.password_is_correct(user_name, user_password):
         token = db.generate_token(user_id)
@@ -40,6 +40,36 @@ def login():
         "result" : "error",
         "comment": "Please check your user_name/password or sign up by following link [sign_up]"
     })
+
+
+@app.route('/logout', methods=['POST'])
+def loggout():
+    post_data = request.get_json()
+    if not post_data:
+        return jsonify({
+            "result" : "error",
+            "comment" : "Invalid format, check your input and try again"
+        })
+    
+    if not 'token' in post_data :
+        return jsonify({"""
+            "result" : "error",
+            "comment" : "Please follow the current template {"token" : "*************"}"
+            """
+        })
+    
+    user_id = db.get_user_id_by_token(post_data['token'])
+    if not user_id:
+        return jsonify( {
+            "result" : "error",
+            "comment" : "Invalid token, try again"
+        })
+    
+    db.delete_token(user_id)
+    return jsonify({
+        "result" : "ok",
+        "comment": "You are successfully logged out"
+    })    
 
     
 @app.route('/registration', methods=['POST'])
@@ -89,7 +119,7 @@ def statistics():
             """
         })
 
-    if not db.token_is_valid(post_data['token']):
+    if not db.get_user_id_by_token(post_data['token']):
         return jsonify({
             "result" : "error",
             "comment" : "Invalid token"
@@ -125,7 +155,7 @@ def battle_mode():
             """
         })
     
-    if not db.token_is_valid(post_data['token']):
+    if not db.get_user_id_by_token(post_data['token']):
         return jsonify({
             "result" : "error",
             "comment" : "Invalid token"
