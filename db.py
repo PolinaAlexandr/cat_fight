@@ -8,18 +8,23 @@ from datetime import datetime
 from user_statistics import UserStatistics
 
 
-CREATE_TABLE_QUERY = (
-        'CREATE TABLE IF NOT EXISTS  Users'
-        '(id integer primary key autoincrement, user_name text, password text, token text, registration_date timestamp, status text, enemy_id int)'
-        )
+CREATE_USERS_TABLE_QUERY = (
+    'CREATE TABLE IF NOT EXISTS  Users'
+    '(id integer primary key autoincrement, user_name text, password text, token text, registration_date timestamp, status text, enemy_id int, battle_id int)'
+)
 
-DATABASE_NAME = "users.db"
+CREATE_BATTLES_TABLE_QUERY = (
+    'CREATE TABLE IF NOT EXISTS Battles  '
+    '(id integer primary key autoincrement, current_turn_user_id int, winner_id int, loser_id int)'
+)
+
+DATABASE_PATH = "cat_fight.db"
 
 DATABASE_PATH = os.path.join(
     os.path.expanduser('~'),
     'wg_forge_study',
     'cat_fight',
-    DATABASE_NAME
+    DATABASE_PATH
 )
 
 def init_db():
@@ -37,8 +42,9 @@ def init_db():
     connection = sqlite3.connect(DATABASE_PATH,  detect_types=sqlite3.PARSE_DECLTYPES)
     cursor = connection.cursor()
 
-    cursor.execute(CREATE_TABLE_QUERY)
-
+    cursor.execute(CREATE_USERS_TABLE_QUERY)
+    cursor.execute(CREATE_BATTLES_TABLE_QUERY)
+    
     cursor.close()
     connection.commit()
     connection.close()
