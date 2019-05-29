@@ -15,7 +15,7 @@ CREATE_USERS_TABLE_QUERY = (
 
 CREATE_BATTLES_TABLE_QUERY = (
     'CREATE TABLE IF NOT EXISTS Battles  '
-    '(id integer primary key autoincrement, current_turn_user_id int, winner_id int, loser_id int)'
+    '(id integer primary key autoincrement, fuild_lenght int, fuild_height int, current_turn_user_id int, winner_id int, loser_id int)'
 )
 
 CREATE_POINTS_TABLE_QUERY = (
