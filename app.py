@@ -211,7 +211,24 @@ def battle_status():
     })
     
         
-        
+@app.route('/battle/action', methods=['POST'])
+def battle_action():
+    post_data = request.get_json()
+    if not post_data:
+        return jsonify({
+            "result" : "error",
+            "comment" : "Invalid format, check your input and try again"
+        })      
+    
+    if not 'token' in post_data:
+        return jsonify({"""
+            "result" : "error",
+            "comment" : "Please follow the current template {"token" : "*****"}"
+            """
+        })
+    
+
+
 if __name__ == "__main__":
     db.init_db()
     app.run()

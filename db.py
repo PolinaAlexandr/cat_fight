@@ -18,6 +18,11 @@ CREATE_BATTLES_TABLE_QUERY = (
     '(id integer primary key autoincrement, current_turn_user_id int, winner_id int, loser_id int)'
 )
 
+CREATE_POINTS_TABLE_QUERY = (
+    'CREATE TABLE IF NOT EXISTS Poinst  '
+    '(battle_id int, x int, y int, crossed_points int)'
+)
+
 DATABASE_PATH = "cat_fight.db"
 
 DATABASE_PATH = os.path.join(
@@ -44,6 +49,8 @@ def init_db():
 
     cursor.execute(CREATE_USERS_TABLE_QUERY)
     cursor.execute(CREATE_BATTLES_TABLE_QUERY)
+    cursor.execute(CREATE_POINTS_TABLE_QUERY)
+
     
     cursor.close()
     connection.commit()
@@ -168,7 +175,8 @@ def find_enemy(user_id):
 
     cursor.execute('UPDATE Users SET enemy_id = ?, status = "fighting" WHERE id = ?', (enemy_id, user_id))
     cursor.execute('UPDATE Users SET enemy_id = ?, status = "fighting" WHERE id = ?', (user_id, enemy_id))
-    
+    # cursor.execute('')
+    # random.choice([user_id, enemy_id])
     cursor.close()
     connection.commit()
     connection.close()
