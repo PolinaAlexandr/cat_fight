@@ -175,13 +175,33 @@ def find_enemy(user_id):
 
     cursor.execute('UPDATE Users SET enemy_id = ?, status = "fighting" WHERE id = ?', (enemy_id, user_id))
     cursor.execute('UPDATE Users SET enemy_id = ?, status = "fighting" WHERE id = ?', (user_id, enemy_id))
-    # cursor.execute('')
-    # random.choice([user_id, enemy_id])
+    
+    current_turn_users_id = random.choice([user_id, enemy_id])
+    
+    cursor.execute('INSERT INTO Battle (current_turn_user_id) VALUE(?)', (current_turn_users_id, ))
     cursor.close()
     connection.commit()
     connection.close()
     
     return enemy_name
+
+
+def get_user_turn(user_id):
+    connection = sqlite3.connect(DATABASE_PATH, detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)
+    cursor = connection.cursor()
+    
+    cursor.execute('SELECT current_turn_user_id')
+    
+    current_turn_user_id = cursor.fetchone()
+    
+    if user_id is not current_turn_user_id:
+        return None
+
+    cursor.close()
+    connection.commit()
+    connection.close()
+
+    # return current_turn_user_id
 
 
 def get_user_enemy(user_id):

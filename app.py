@@ -227,6 +227,30 @@ def battle_action():
             """
         })
     
+    user_id = db.get_user_id_by_token(post_data['token'])
+    if not user_id:
+        return jsonify({
+            "result" : "error",
+            "comment" : "Invalid token"
+        })
+
+    user_enemy_name = db.find_enemy(user_id)
+    if not user_enemy_name:
+        return jsonify({
+            "result" : "error",
+            "comment" : "Cannot find battle partner"
+        })
+    
+    if not db.get_user_turn(user_id):
+        return jsonify({
+            "result" : "ok",
+            "comment" : "Now is your opponent turn, please wait for yours" 
+        })
+
+    return jsonify({
+        "result" : "ok",
+        "comment" : "Your turn!"
+    })
 
 
 if __name__ == "__main__":
