@@ -15,11 +15,11 @@ CREATE_USERS_TABLE_QUERY = (
 
 CREATE_BATTLES_TABLE_QUERY = (
     'CREATE TABLE IF NOT EXISTS Battles  '
-    '(id integer primary key autoincrement, fuild_lenght int, fuild_height int, current_turn_user_id int, winner_id int, loser_id int)'
+    '(id integer primary key autoincrement, field_lenght int, field_height int, current_turn_user_id int, winner_id int, loser_id int)'
 )
 
 CREATE_POINTS_TABLE_QUERY = (
-    'CREATE TABLE IF NOT EXISTS Poinst  '
+    'CREATE TABLE IF NOT EXISTS Points  '
     '(battle_id int, x int, y int, crossed_points int)'
 )
 
@@ -173,12 +173,14 @@ def find_enemy(user_id):
     enemy_id = enemy_row[0]
     enemy_name = enemy_row[1]
 
-    cursor.execute('UPDATE Users SET enemy_id = ?, status = "fighting" WHERE id = ?', (enemy_id, user_id))
-    cursor.execute('UPDATE Users SET enemy_id = ?, status = "fighting" WHERE id = ?', (user_id, enemy_id))
-    
+
     current_turn_users_id = random.choice([user_id, enemy_id])
     
-    cursor.execute('INSERT INTO Battle (current_turn_user_id) VALUE(?)', (current_turn_users_id, ))
+    cursor.execute('INSERT INTO Battles (current_turn_user_id) VALUES(?)', (current_turn_users_id, ))
+    battle_id = cursor.lastrowid
+    cursor.execute('UPDATE Users SET enemy_id = ?, battle_id = ?, status = "fighting" WHERE id = ?', (enemy_id, battle_id, user_id))
+    cursor.execute('UPDATE Users SET enemy_id = ?, battle_id = ?, status = "fighting" WHERE id = ?', (user_id, battle_id, enemy_id))
+     
     cursor.close()
     connection.commit()
     connection.close()
@@ -186,22 +188,24 @@ def find_enemy(user_id):
     return enemy_name
 
 
-def get_user_turn(user_id):
+def get_current_turn_user_id(user_id):
     connection = sqlite3.connect(DATABASE_PATH, detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)
     cursor = connection.cursor()
     
-    cursor.execute('SELECT current_turn_user_id')
+    cursor.execute('SELECT current_turn_user_id FROM Battles WHERE id IN (SELECT battle_id FROM Users WHERE id = ?)',(user_id, ))
     
-    current_turn_user_id = cursor.fetchone()
-    
-    if user_id is not current_turn_user_id:
+    row = cursor.fetchone()
+
+    if not row:
         return None
+
+    current_turn_user_id = row[0]
 
     cursor.close()
     connection.commit()
     connection.close()
 
-    # return current_turn_user_id
+    return current_turn_user_id
 
 
 def get_user_enemy(user_id):

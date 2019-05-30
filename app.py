@@ -220,11 +220,11 @@ def battle_action():
             "comment" : "Invalid format, check your input and try again"
         })      
     
-    if not 'token' in post_data:
-        return jsonify({"""
+    if 'token' not in post_data or 'action' not in post_data:
+        return jsonify({
             "result" : "error",
-            "comment" : "Please follow the current template {"token" : "*****"}"
-            """
+            "comment" : "Please follow the current template {'token' : '*****', 'action' : 'your_action'}"
+            
         })
     
     user_id = db.get_user_id_by_token(post_data['token'])
@@ -234,22 +234,34 @@ def battle_action():
             "comment" : "Invalid token"
         })
 
-    user_enemy_name = db.find_enemy(user_id)
+    user_enemy_name = db.get_user_enemy(user_id)
     if not user_enemy_name:
         return jsonify({
             "result" : "error",
-            "comment" : "Cannot find battle partner"
+            "comment" : "You are not in the battle"
         })
-    
-    if not db.get_user_turn(user_id):
+    current_turn_user_id = db.get_current_turn_user_id(user_id)
+    if current_turn_user_id != user_id:
         return jsonify({
-            "result" : "ok",
-            "comment" : "Now is your opponent turn, please wait for yours" 
+            "result": "error",
+            "comment": "It is not your turn"
         })
 
+    action = post_data['action']
+    if action not in ('up', 'down', 'left', 'right'):
+        return jsonify({
+            "result": "error",
+            "comment": "Invalid action. Available actions: 'up', 'down', 'left', 'right'"
+        })
+  
+    #  make action
+    #  action_result = db.make_action(user_id, action)
+    action_result = {}
+    #  return updated battlefield
     return jsonify({
-        "result" : "ok",
-        "comment" : "Your turn!"
+        "result": "ok",
+        "comment": "Action made successfuly.",
+        "action result": action_result
     })
 
 
