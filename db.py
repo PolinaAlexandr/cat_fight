@@ -7,6 +7,8 @@ import random
 from datetime import datetime
 from user_statistics import UserStatistics
 
+from game_field import Point
+
 
 CREATE_USERS_TABLE_QUERY = (
     'CREATE TABLE IF NOT EXISTS  Users'
@@ -15,12 +17,12 @@ CREATE_USERS_TABLE_QUERY = (
 
 CREATE_BATTLES_TABLE_QUERY = (
     'CREATE TABLE IF NOT EXISTS Battles  '
-    '(id integer primary key autoincrement, field_lenght int, field_height int, current_turn_user_id int, winner_id int, loser_id int)'
+    '(id integer primary key autoincrement, field_length int, field_height int, current_turn_user_id int, winner_id int, loser_id int)'
 )
 
 CREATE_POINTS_TABLE_QUERY = (
     'CREATE TABLE IF NOT EXISTS Points  '
-    '(battle_id int, x int, y int, crossed_points int)'
+    '(entity_id int, x int, y int)'
 )
 
 DATABASE_PATH = "cat_fight.db"
@@ -175,12 +177,17 @@ def find_enemy(user_id):
 
 
     current_turn_users_id = random.choice([user_id, enemy_id])
+
+    field_length = 5
+    field_height = 5
     
-    cursor.execute('INSERT INTO Battles (current_turn_user_id) VALUES(?)', (current_turn_users_id, ))
+    cursor.execute('INSERT INTO Battles (current_turn_user_id, field_length, field_height) VALUES(?, ?, ?)', (current_turn_users_id, field_length, field_height))
     battle_id = cursor.lastrowid
     cursor.execute('UPDATE Users SET enemy_id = ?, battle_id = ?, status = "fighting" WHERE id = ?', (enemy_id, battle_id, user_id))
     cursor.execute('UPDATE Users SET enemy_id = ?, battle_id = ?, status = "fighting" WHERE id = ?', (user_id, battle_id, enemy_id))
-     
+    cursor.execute('INSERT INTO Points(entity_id, x, y) VALUES(?, ?, ?)', (user_id, 0 , 0))
+    cursor.execute('INSERT INTO Points(entity_id, x, y) VALUES(?, ?, ?)', (enemy_id, field_length , field_height))
+
     cursor.close()
     connection.commit()
     connection.close()
@@ -224,3 +231,99 @@ def get_user_enemy(user_id):
     connection.close()
 
     return enemy_name 
+
+
+def make_action(user_id, action):
+    battle_won = False
+    connection = sqlite3.connect(DATABASE_PATH, detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)
+    cursor = connection.cursor()
+
+    cursor.execute('SELECT x, y FROM Points WHERE entity_id = ?', (user_id, ))
+    point_row = cursor.fetchone()
+    if not point_row:
+        return None, battle_won
+    user_point = Point(point_row[0], point_row[1])
+    prev_user_point = Point(user_point.x, user_point.y)
+    cursor.execute('SELECT field_length, field_height, id FROM Battles WHERE id IN (SELECT battle_id FROM Users WHERE id = ?)', (user_id, ))
+    battle_row = cursor.fetchone()
+    if not battle_row:
+        return None, battle_won
+    
+    field_length = battle_row[0]
+    field_height = battle_row[1]
+    battle_id = battle_row[2]
+
+    if action == 'up':
+        if (user_point.y + 1) > field_height:
+            return None, battle_won
+        else:
+            user_point.y += 1
+    elif action == 'down':
+        if (user_point.y - 1) < 0:
+            return None, battle_won
+        else:
+            user_point.y -= 1
+    elif action == 'left':
+        if (user_point.x - 1) < 0:
+            return None
+        else:
+            user_point.x -= 1
+    elif action == 'right':
+        if (user_point.x + 1) > field_length:
+            return None, battle_won
+        else:
+            user_point.x += 1
+    cursor.execute(
+        'UPDATE Points SET x = ?, y = ? WHERE entity_id = ?',
+        (user_point.x, user_point.y, user_id, )
+    )
+    cursor.execute(
+        'INSERT INTO POINTS(entity_id, x, y) VALUES(?, ?, ?)',
+        (battle_id, prev_user_point.x, prev_user_point.y)
+    )
+    cursor.execute('SELECT x, y FROM Points WHERE entity_id = ?', (battle_id, ))
+    set_points_rows = cursor.fetchall()
+    
+    if not set_points_rows:
+        return None, battle_won
+    set_points = [
+        Point(row[0], row[1])
+        for row in set_points_rows
+    ]
+
+    cursor.execute('SELECT x, y FROM Points WHERE entity_id IN (SELECT enemy_id from Users where id = ?)', (user_id, ))
+    enemy_row = cursor.fetchone()
+    if not enemy_row:
+        return None, battle_won
+    enemy_point = Point(enemy_row[0], enemy_row[1])
+
+    enemy_neighbour_points = [
+        Point(enemy_point.x + 1, enemy_point.y),
+        Point(enemy_point.x - 1, enemy_point.y),
+        Point(enemy_point.x, enemy_point.y + 1),
+        Point(enemy_point.x, enemy_point.y - 1),
+    ]
+
+    enemy_neighbour_points = [
+        point
+        for point in enemy_neighbour_points
+        if point.x > 0 and point.y > 0 and point.x <= field_length and point.y <= field_height 
+    ]
+
+    all_neighbour_points_set = True
+
+    for point in enemy_neighbour_points:
+        for set_point in set_points:
+            if set_point.x != point.x or set_point.y != point.y:
+                all_neighbour_points_set = False
+                break
+                
+    if all_neighbour_points_set:
+        battle_won = True
+        cursor.execute('DELETE FROM Points WHERE entity_id in (?, ?, (SELECT enemy_id from Users where id = ?))', (user_id, battle_id, user_id))
+
+    cursor.close()
+    connection.commit()
+    connection.close()
+    
+    return user_point, battle_won

@@ -254,14 +254,15 @@ def battle_action():
             "comment": "Invalid action. Available actions: 'up', 'down', 'left', 'right'"
         })
   
-    #  make action
-    #  action_result = db.make_action(user_id, action)
-    action_result = {}
-    #  return updated battlefield
+    new_position, battle_won = db.make_action(user_id, action)
+    if battle_won:
+        comment = 'You won the battle!'
+        # TODO Set statuses
+    else:
+        commet = f'Action made successfuly. Your new position is [{new_position.x}, {new_position.y}]'
     return jsonify({
         "result": "ok",
-        "comment": "Action made successfuly.",
-        "action result": action_result
+        "comment": comment,
     })
 
 
