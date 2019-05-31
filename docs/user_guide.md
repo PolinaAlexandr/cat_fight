@@ -1,0 +1,37 @@
+# User_guide!
+## cURL examples :
+
+ Lets start with the registratin:
+```
+    $ curl -X POST -H "Content-Type:application/json" -d '{"user_name" : "Margot", "password" : "556677"}' http://localhost:5000/registration
+```
+
+After registration you should login. Just replace `registration` endpoint with `login`. Do not forget to copy your output token for the future operations:
+
+```
+    $ curl -X POST -H "Content-Type:application/json" -d '{"user_name" : "Margot", "password" : "556677"}' http://localhost:5000/login
+```
+
+For logging out(`/logout`) use the current form: 
+```
+    $ curl -X POST -H "Content-Type:application/json" -d '{ "token" : "pastle_token"}' http://localhost:5000/logout
+```
+Statistics endpoint(`/stats`) shows information about chosen user, it is avalible only for logined users:
+```
+    $ curl -X POST -H "Content-Type:application/json" -d '{"user_name" : "chosen_user_name", "token" : "your_valid_token"}' http://localhost:5000/stats
+```
+Time to join the battle and meet your enemy! Searching for the partner starts here `battle/join`: 
+```
+    $ curl -X POST -H "Content-Type:application/json" -d '{"token" : "8d1f921f47a8482f8d0127a8fb1d7a17"}' http://localhost:5000/battle/join
+
+```
+To know your battle status try `/battle/status`:
+```
+    $ curl -X POST -H "Content-Type:application/json" -d '{"token" : "595ed3a6af4a4da7bfdf1f9f410e2bbe"}' http://localhost:5000/battle/status
+
+```
+For starting action after joining the battle use `battle/action` to learn available actions see [battle-guide]:
+```
+    $ curl -X POST -H "Content-Type:application/json" -d '{"token" : "595ed3a6af4a4da7bfdf1f9f410e2bbe", "action" : "up"}' http://localhost:5000/battle/action
+
+```

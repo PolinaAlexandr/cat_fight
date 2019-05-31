@@ -1,4 +1,4 @@
-# Visual fuild output example
+# Visual field output example
 ``` 
         ______________________________
         |     |     |     |     |=^.^=|
@@ -14,8 +14,15 @@
         1     2     3     4     5
 
 ```
- - `=^.^=` : Players avatar 
- - `X`  : Crossed points (this course is not available)
+  - `=^.^=` : Players avatar 
+  - `X`  : Crossed points (this course is not available)
+ 
+
+ # Movement control
+   - `U` - UP. Moves player to the free upper cell.
+   - `D` - DOWN. Moves palyer to the free lower cell.
+   - `L` - LEFT. Moves player to the free rigth cell.
+   - `R` - Right. Moves player to the free left cell.
 
 
 # Output format
@@ -31,7 +38,7 @@
  - `ok` : Your request is seccussfully processed
  - `error`: One of the processes failed
 
-Registration valid responses:
+## Registration valid responses:
 ```
     {
         "result" : "ok",
@@ -57,7 +64,7 @@ Registration valid responses:
         "comment" : "Invalid format, check your input and try again"
     }
 ```
- Login valid responses:
+ ## Login valid responses:
  ```
     {
         "result" : "ok",
@@ -85,7 +92,7 @@ Registration valid responses:
     }
 ```
 
-Logout valid responses:
+## Logout valid responses:
 ```
     {
         "result" : "ok",
@@ -112,7 +119,7 @@ Logout valid responses:
     }
 ```
 
-Statistics valid responses:
+## Statistics valid responses:
 ```
     {
         "result" : "ok"
@@ -151,7 +158,7 @@ Statistics valid responses:
     }
 ```
  
-Battle/join valid responses:
+## Battle/join valid responses:
 ```
     {
         "result" : "ok",
@@ -184,7 +191,7 @@ Battle/join valid responses:
     }
 ```
 
-Battle/status valid responses:
+## Battle/status valid responses:
 ```
     {
         "result" : "ok",
