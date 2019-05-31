@@ -3,6 +3,7 @@ import os
 import hashlib
 import uuid
 import random
+import psycopg2
 
 from datetime import datetime
 from user_statistics import UserStatistics
@@ -317,9 +318,11 @@ def make_action(user_id, action):
             if set_point.x != point.x or set_point.y != point.y:
                 all_neighbour_points_set = False
                 break
-                
+
     if all_neighbour_points_set:
         battle_won = True
+        cursor.execute('UPDATE Users SET status = "logged in" WHERE id in (SELECT winner_id FROM Battles WHERE battle_id = ?)', (battle_id, ))
+        cursor.execute('UPDATE Users SET status = "logged in" WHERE id in (SELECT loser_id FROM Battles WHERE battle_id = ?)', (battle_id, ))
         cursor.execute('DELETE FROM Points WHERE entity_id in (?, ?, (SELECT enemy_id from Users where id = ?))', (user_id, battle_id, user_id))
 
     cursor.close()

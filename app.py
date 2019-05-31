@@ -257,7 +257,6 @@ def battle_action():
     new_position, battle_won = db.make_action(user_id, action)
     if battle_won:
         comment = 'You won the battle!'
-        # TODO Set statuses
     else:
         commet = f'Action made successfuly. Your new position is [{new_position.x}, {new_position.y}]'
     return jsonify({
