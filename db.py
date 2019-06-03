@@ -182,7 +182,7 @@ def find_enemy(user_id):
     field_length = 5
     field_height = 5
     
-    cursor.execute('INSERT INTO Battles (current_turn_user_id, field_length, field_height) VALUES(?, ?, ?)', (current_turn_users_id, field_length, field_height))
+    cursor.execute('INSERT INTO Battles (current_turn_user_id, field_length, field_height) VALUES(, ?, ?)', (current_turn_users_id, field_length, field_height))
     battle_id = cursor.lastrowid
     cursor.execute('UPDATE Users SET enemy_id = ?, battle_id = ?, status = "fighting" WHERE id = ?', (enemy_id, battle_id, user_id))
     cursor.execute('UPDATE Users SET enemy_id = ?, battle_id = ?, status = "fighting" WHERE id = ?', (user_id, battle_id, enemy_id))
