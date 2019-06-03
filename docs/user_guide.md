@@ -30,7 +30,7 @@ To know your battle status try `/battle/status`:
     $ curl -X POST -H "Content-Type:application/json" -d '{"token" : "your_valid_token"}' http://localhost:5000/battle/status
 
 ```
-For starting action after joining the battle use `battle/action` to learn available actions see [battle-guide]:
+For starting action after joining the battle use `battle/action`. To learn available actions see [battle-guide]:
 ```
     $ curl -X POST -H "Content-Type:application/json" -d '{"token" : "your_valid_token", "action" : "up"}' http://localhost:5000/battle/action
 
