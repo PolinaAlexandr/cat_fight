@@ -281,19 +281,18 @@ def help():
             """
         })
 
-    return """\n
-    registration: curl -X POST -H "Content-Type:application/json" -d '{"user_name" : "your_user_name", "password" : "your_password"}' http://localhost:5000/registration\n 
-    login: curl -X POST -H "Content-Type:application/json" -d '{"user_name" : "your_user_name", "password" : "your_password"}' http://localhost:5000/login\n
-    logout: curl -X POST -H "Content-Type:application/json" -d '{"token" : "your_valid_token"}' http://localhost:5000/logout\n
-    statistics: curl -X POST -H "Content-Type:application/json" -d '{"user_name" : "chosen_user_name", "token" : "your_valid_token"}' http://localhost:5000/stats\n
-    join the battle: curl -X POST -H "Content-Type:application/json" -d '{"token" : "your_valid_token"}' http://localhost:5000/battle/join\n
-    see your battle status: curl -X POST -H "Content-Type:application/json" -d '{"token" : "your_valid_token"}' http://localhost:5000/battle/status\n
-    fighting the battle: curl -X POST -H "Content-Type:application/json" -d '{"token" : "your_valid_token", "action" : "up/down/right/left"}' http://localhost:5000/battle/action\n
-    """
+    return """
+registration: curl -X POST -H "Content-Type:application/json" -d '{"user_name" : "your_user_name", "password" : "your_password"}' http://host:port/registration
+login: curl -X POST -H "Content-Type:application/json" -d '{"user_name" : "your_user_name", "password" : "your_password"}' http://host:port/login
+logout: curl -X POST -H "Content-Type:application/json" -d '{"token" : "your_valid_token"}' http://host:port/logout
+statistics: curl -X POST -H "Content-Type:application/json" -d '{"user_name" : "chosen_user_name", "token" : "your_valid_token"}' http://host:port/stats
+join the battle: curl -X POST -H "Content-Type:application/json" -d '{"token" : "your_valid_token"}' http://host:port/battle/join    
+see your battle status: curl -X POST -H "Content-Type:application/json" -d '{"token" : "your_valid_token"}' http://host:port/battle/status
+fighting the battle: curl -X POST -H "Content-Type:application/json" -d '{"token" : "your_valid_token", "action" : "up/down/right/left"}' http://host:port/battle/action\n"""
 
 
 if __name__ == "__main__":
-    print("""!!!!!!!!!!!!!HELP ALERT!!!!!!!!!!!!!\n curl -X POST -H "Content-Type:application/json" -d '{"help": "me!"}' http://localhost:5000/help \n!!!!!!!!!!!!!!!
+    print("""!!!!!!!!!!!!!HELP ALERT!!!!!!!!!!!!!\n curl -X POST -H "Content-Type:application/json" -d '{"help": "me!"}' http://host:port/help \n!!!!!!!!!!!!!!!
 """)
     db.init_db()
     app.run()
