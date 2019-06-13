@@ -265,6 +265,35 @@ def battle_action():
     })
 
 
+@app.route('/help', methods=['POST'])
+def help():
+    post_data = request.get_json()
+    if not post_data:
+        return jsonify({
+            "result" : "error",
+            "comment" : "Invalid format, check your input and try again"
+        })      
+    
+    if not 'help' in post_data:
+        return jsonify({"""
+            "result" : "error",
+            "comment" : "Please follow the current template {"help"}"
+            """
+        })
+
+    return """\n
+    registration: curl -X POST -H "Content-Type:application/json" -d '{"user_name" : "your_user_name", "password" : "your_password"}' http://localhost:5000/registration\n 
+    login: curl -X POST -H "Content-Type:application/json" -d '{"user_name" : "your_user_name", "password" : "your_password"}' http://localhost:5000/login\n
+    logout: curl -X POST -H "Content-Type:application/json" -d '{"token" : "your_valid_token"}' http://localhost:5000/logout\n
+    statistics: curl -X POST -H "Content-Type:application/json" -d '{"user_name" : "chosen_user_name", "token" : "your_valid_token"}' http://localhost:5000/stats\n
+    join the battle: curl -X POST -H "Content-Type:application/json" -d '{"token" : "your_valid_token"}' http://localhost:5000/battle/join\n
+    see your battle status: curl -X POST -H "Content-Type:application/json" -d '{"token" : "your_valid_token"}' http://localhost:5000/battle/status\n
+    fighting the battle: curl -X POST -H "Content-Type:application/json" -d '{"token" : "your_valid_token", "action" : "up/down/right/left"}' http://localhost:5000/battle/action\n
+    """
+
+
 if __name__ == "__main__":
+    print("""!!!!!!!!!!!!!HELP ALERT!!!!!!!!!!!!!\n curl -X POST -H "Content-Type:application/json" -d '{"help": "me!"}' http://localhost:5000/help \n!!!!!!!!!!!!!!!
+""")
     db.init_db()
     app.run()
