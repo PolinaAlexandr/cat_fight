@@ -9,6 +9,7 @@ from datetime import datetime
 from user_statistics import UserStatistics
 
 from game_field import Point
+from game_field import GameField
 
 
 CREATE_USERS_TABLE_QUERY = (
@@ -26,13 +27,13 @@ CREATE_POINTS_TABLE_QUERY = (
     '(entity_id int, x int, y int)'
 )
 
-DATABASE_PATH = "cat_fight.db"
+DATABASE_NAME = "cat_fight.db"
 
 DATABASE_PATH = os.path.join(
     os.path.expanduser('~'),
     'wg_forge_study',
     'cat_fight',
-    DATABASE_PATH
+    DATABASE_NAME
 )
 
 def init_db():
@@ -321,8 +322,22 @@ def make_action(user_id, action):
 
     if all_neighbour_points_set:
         battle_won = True
-        cursor.execute('UPDATE Users SET status = "logged in" WHERE id in (SELECT winner_id FROM Battles WHERE battle_id = ?)', (battle_id, ))
-        cursor.execute('UPDATE Users SET status = "logged in" WHERE id in (SELECT loser_id FROM Battles WHERE battle_id = ?)', (battle_id, ))
+
+        # cursor.execute('SELECT x, y FROM Points WHERE entity_id IN (SELECT user_id from Users where id = ?)', (user_id, ))
+        # user_row = cursor.fetchone()
+        # user_point = Point(user_row[0], user_row[1])
+        # u_point = GameField(user_point)
+        
+        
+        # cursor.execute('SELECT x, y FROM Points WHERE entity_id IN (SELECT enemy_id from Users where id = ?)', (user_id, ))
+        # enemy_row = cursor.fetchone()
+        # enemy_point = Point(user_row[0], user_row[1])
+        # e_point = GameField(user_point)
+        
+        
+        
+        cursor.execute('UPDATE Users SET status = "logged in" WHERE id IN (SELECT winner_id FROM Battles WHERE battle_id = ?)', (battle_id, ))
+        cursor.execute('UPDATE Users SET status = "logged in" WHERE id IN (SELECT loser_id FROM Battles WHERE battle_id = ?)', (battle_id, ))
         cursor.execute('DELETE FROM Points WHERE entity_id in (?, ?, (SELECT enemy_id from Users where id = ?))', (user_id, battle_id, user_id))
 
     cursor.close()
@@ -330,3 +345,10 @@ def make_action(user_id, action):
     connection.close()
     
     return user_point, battle_won
+
+
+# def get_cordinates(battle_id):
+#     connection = sqlite3.connect(DATABASE_PATH, detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)
+#     cursor = connection.cursor()
+
+    cursor.execute('SELECT x, y FROM Points WHERE entity_id in (?, ?, (SELECT user_id from Users where battle_id = ?))', (battle_id, ))
